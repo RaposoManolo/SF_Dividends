@@ -2,7 +2,10 @@ USE DATABASE DIVIDENDS_DEV;
 
 CREATE OR REPLACE FILE FORMAT DV_CSV
     TYPE = 'CSV'
-    SKIP_HEADER = 1;
+    SKIP_HEADER = 1
+    FIELD_OPTIONALLY_ENCLOSED_BY = '"'
+    DATE_FORMAT = 'DD/MM/YYYY'
+    NULL_IF = ('-', '');
 
 Create or Replace Stage STG_Dividends
 File_Format = DV_CSV    
@@ -14,10 +17,19 @@ CREATE OR REPLACE TABLE BRONZE_DIVIDENDS (
     SETTLEMENT_DATE     DATE,          -- Can handle NULL or missing '-' entries
     RECEIPT_GBP         NUMBER(12, 2), -- e.g., 4.64
     PAYMENT_GBP         NUMBER(12, 2), -- e.g., 0.00
-    BALANCE_GBP         NUMBER(12, 2)  -- e.g., 12509.78
+    BALANCE_GBP         VARCHAR(50)  -- e.g., 12509.78
 );
 
 
-cOPY INTO BRONZE_DIVIDENDS
-From @STG_Dividends
-file_FOrmat = (format_Name = DV_CSV)
+SELECT * from STG_Dividends
+
+
+COPY INTO BRONZE_DIVIDENDS
+FROM @STG_DIVIDENDS
+FILE_FORMAT = (
+    FORMAT_NAME = DV_CSV
+    ERROR_ON_COLUMN_COUNT_MISMATCH = FALSE
+);
+
+
+Select * from BRONZE_DIVIDENDS
