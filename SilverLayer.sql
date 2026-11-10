@@ -1,0 +1,23 @@
+Use DIVIDENDS_DEV
+CREATE OR REPLACE VIEW SILVER_DIVIDENDS AS
+Select 
+    TRY_CAST(SPLIT_PART(DIVIDEND_REFERENCE, '/', 1) AS INT) AS Payment_ID,
+    RECORD_DATE,
+    TRY_CAST(SPLIT_PART(DESCRIPTION, ' ', 2) AS Int)  AS NUMBER_OF_STOCKS,
+    -- Field 2: Clean Stock Name
+    TRIM(
+        REGEXP_SUBSTR(
+            DESCRIPTION, 
+            'DIVIDEND\\s+[0-9]+\\s+(.*?)\\s+(COM|SBI|ORD|PREF|CLASS)', 
+            1, 1, 'ie', 1
+        )
+    ) AS STOCK_NAME,
+   RECEIPT_GBP  
+   From BRONZE_DIVIDENDS
+
+   SELECT 
+        STOCK_NAME,
+       yEAR(RECORD_DATE) ,
+        sum(RECEIPT_GBP)  
+   FROM SILVER_DIVIDENDS
+   GROUP BY 1,2

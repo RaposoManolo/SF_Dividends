@@ -32,4 +32,4 @@ FILE_FORMAT = (
 );
 
 
-Select * from BRONZE_DIVIDENDS
+
