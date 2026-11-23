@@ -1,0 +1,465 @@
+{
+  "spec_version": 2,
+  "spec_revision": 17,
+  "version": 2,
+  "title": "Untitled",
+  "tabs": [
+    {
+      "tab_id": "tab-0",
+      "title": "",
+      "tiles": [
+        {
+          "tile_id": "chart-2e77d1d7bb1d",
+          "title": "Test",
+          "type": "table",
+          "spec": {
+            "columns": [
+              {
+                "field": "STOCK_NAME",
+                "label": "STOCK_NAME"
+              }
+            ]
+          },
+          "datasources": [
+            "ds-chart-2e77d1d7bb1d"
+          ]
+        },
+        {
+          "tile_id": "chart-81628d7a9d91",
+          "type": "chart",
+          "spec": {
+            "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+            "width": 400,
+            "height": 200,
+            "padding": 0,
+            "params": [
+              {
+                "name": "__scorecard_reveal",
+                "value": 1
+              },
+              {
+                "name": "__scorecard_pulse",
+                "value": 0
+              }
+            ],
+            "data": {
+              "name": "values"
+            },
+            "transform": [
+              {
+                "calculate": "(isValid(datum['SUM(RECEIPT_GBP)']) && isNumber(datum['SUM(RECEIPT_GBP)'])) ? '£' + (abs(datum['SUM(RECEIPT_GBP)']) >= 1e9 ? format(datum['SUM(RECEIPT_GBP)'] / 1e9, '.2~f') + 'B' : abs(datum['SUM(RECEIPT_GBP)']) >= 1e6 ? format(datum['SUM(RECEIPT_GBP)'] / 1e6, '.2~f') + 'M' : abs(datum['SUM(RECEIPT_GBP)']) >= 1e3 ? format(datum['SUM(RECEIPT_GBP)'] / 1e3, '.2~f') + 'K' : format(datum['SUM(RECEIPT_GBP)'], ',.2~f')) : 'N/A'",
+                "as": "bigNumberText"
+              },
+              {
+                "calculate": "datum['SUM(RECEIPT_GBP)'] == null || datum['SUM(RECEIPT_GBP)'] == 0 ? null : (datum['SUM(RECEIPT_GBP)'] - datum['SUM(RECEIPT_GBP)']) / datum['SUM(RECEIPT_GBP)'] * 100",
+                "as": "__derivedDelta"
+              },
+              {
+                "calculate": "!((isValid(datum['SUM(RECEIPT_GBP)']) && isNumber(datum['SUM(RECEIPT_GBP)']))) ? '' : (((isValid(datum['SUM(RECEIPT_GBP)']) && isNumber(datum['SUM(RECEIPT_GBP)']))) ? ((datum['__derivedDelta'] == null ? 'N/A' : format(abs(datum['__derivedDelta']), '.2f') + '%') + ' (' + (abs(abs(datum['SUM(RECEIPT_GBP)'] - datum['SUM(RECEIPT_GBP)'])) >= 1e9 ? format(abs(datum['SUM(RECEIPT_GBP)'] - datum['SUM(RECEIPT_GBP)']) / 1e9, '.2~f') + 'B' : abs(abs(datum['SUM(RECEIPT_GBP)'] - datum['SUM(RECEIPT_GBP)'])) >= 1e6 ? format(abs(datum['SUM(RECEIPT_GBP)'] - datum['SUM(RECEIPT_GBP)']) / 1e6, '.2~f') + 'M' : abs(abs(datum['SUM(RECEIPT_GBP)'] - datum['SUM(RECEIPT_GBP)'])) >= 1e3 ? format(abs(datum['SUM(RECEIPT_GBP)'] - datum['SUM(RECEIPT_GBP)']) / 1e3, '.2~f') + 'K' : format(abs(datum['SUM(RECEIPT_GBP)'] - datum['SUM(RECEIPT_GBP)']), ',.2~f')) + ')') : 'N/A')",
+                "as": "deltaText"
+              },
+              {
+                "calculate": "(isValid(datum['SUM(RECEIPT_GBP)']) && isNumber(datum['SUM(RECEIPT_GBP)'])) && (isValid(datum['SUM(RECEIPT_GBP)']) && isNumber(datum['SUM(RECEIPT_GBP)'])) ? ((datum['SUM(RECEIPT_GBP)'] - datum['SUM(RECEIPT_GBP)']) >= 0 ? '#087959' : '#d3132f') : '#5d6a85'",
+                "as": "deltaColor"
+              },
+              {
+                "calculate": "(isValid(datum['SUM(RECEIPT_GBP)']) && isNumber(datum['SUM(RECEIPT_GBP)'])) && (isValid(datum['SUM(RECEIPT_GBP)']) && isNumber(datum['SUM(RECEIPT_GBP)'])) ? ((datum['SUM(RECEIPT_GBP)'] - datum['SUM(RECEIPT_GBP)']) >= 0 ? 'up' : 'down') : ''",
+                "as": "deltaDirection"
+              },
+              {
+                "calculate": "'neutral'",
+                "as": "__toneKey"
+              },
+              {
+                "calculate": "!(isValid(datum['SUM(RECEIPT_GBP)']) && isNumber(datum['SUM(RECEIPT_GBP)'])) ? '#5d6a85' : ('#1e252f')",
+                "as": "__numberColor"
+              },
+              {
+                "calculate": "'neutral'",
+                "as": "__chartKey"
+              },
+              {
+                "calculate": "'#3580f2'",
+                "as": "__lineColor"
+              },
+              {
+                "calculate": "'#3580f2'",
+                "as": "__chartColor"
+              }
+            ],
+            "layer": [
+              {
+                "transform": [
+                  {
+                    "window": [
+                      {
+                        "op": "row_number",
+                        "as": "__row"
+                      }
+                    ]
+                  },
+                  {
+                    "filter": "datum.__row == 1"
+                  }
+                ],
+                "mark": {
+                  "type": "text",
+                  "align": "center",
+                  "baseline": "middle",
+                  "fontWeight": "bold",
+                  "fontSize": {
+                    "expr": "width >= 140 ? 40 : (width >= 90 ? 24 : 14)"
+                  },
+                  "limit": {
+                    "expr": "width - 8"
+                  },
+                  "color": {
+                    "expr": "datum['__numberColor']"
+                  }
+                },
+                "encoding": {
+                  "x": {
+                    "value": {
+                      "expr": "width / 2"
+                    }
+                  },
+                  "y": {
+                    "value": {
+                      "expr": "(height + 28) / 2 - 20"
+                    }
+                  },
+                  "text": {
+                    "field": "bigNumberText"
+                  }
+                }
+              },
+              {
+                "name": "scorecard-trend-icon-up",
+                "transform": [
+                  {
+                    "window": [
+                      {
+                        "op": "row_number",
+                        "as": "__row"
+                      }
+                    ]
+                  },
+                  {
+                    "filter": "datum.__row == 1"
+                  },
+                  {
+                    "calculate": "datum['deltaDirection'] == '' ? 0 : 16",
+                    "as": "__iw"
+                  },
+                  {
+                    "calculate": "scorecardTextWidth(datum['deltaText'], '600 12px Inter, Roboto, \\'Helvetica Neue\\', Arial, sans-serif')",
+                    "as": "__dw"
+                  },
+                  {
+                    "calculate": "0",
+                    "as": "__cw"
+                  },
+                  {
+                    "calculate": "max(4, width / 2 - (datum.__iw + datum.__dw + (datum.__cw > 0 ? 6 + datum.__cw : 0)) / 2)",
+                    "as": "__ix"
+                  },
+                  {
+                    "calculate": "datum.__ix + datum.__iw",
+                    "as": "__dx"
+                  },
+                  {
+                    "filter": "datum['deltaDirection'] == 'up'"
+                  }
+                ],
+                "mark": {
+                  "type": "point",
+                  "shape": "M4.05 9.72a.5.5 0 0 1 .055-.527l3.5-4.5a.5.5 0 0 1 .79 0l3.5 4.5A.5.5 0 0 1 11.5 10h-7a.5.5 0 0 1-.45-.28",
+                  "size": 4,
+                  "filled": true,
+                  "opacity": 1,
+                  "strokeWidth": 0,
+                  "color": {
+                    "expr": "datum['deltaColor']"
+                  }
+                },
+                "encoding": {
+                  "x": {
+                    "value": {
+                      "expr": "datum.__ix"
+                    }
+                  },
+                  "y": {
+                    "value": {
+                      "expr": "(height + 28) / 2 - 20 + 54 - 8"
+                    }
+                  }
+                }
+              },
+              {
+                "name": "scorecard-trend-icon-down",
+                "transform": [
+                  {
+                    "window": [
+                      {
+                        "op": "row_number",
+                        "as": "__row"
+                      }
+                    ]
+                  },
+                  {
+                    "filter": "datum.__row == 1"
+                  },
+                  {
+                    "calculate": "datum['deltaDirection'] == '' ? 0 : 16",
+                    "as": "__iw"
+                  },
+                  {
+                    "calculate": "scorecardTextWidth(datum['deltaText'], '600 12px Inter, Roboto, \\'Helvetica Neue\\', Arial, sans-serif')",
+                    "as": "__dw"
+                  },
+                  {
+                    "calculate": "0",
+                    "as": "__cw"
+                  },
+                  {
+                    "calculate": "max(4, width / 2 - (datum.__iw + datum.__dw + (datum.__cw > 0 ? 6 + datum.__cw : 0)) / 2)",
+                    "as": "__ix"
+                  },
+                  {
+                    "calculate": "datum.__ix + datum.__iw",
+                    "as": "__dx"
+                  },
+                  {
+                    "filter": "datum['deltaDirection'] == 'down'"
+                  }
+                ],
+                "mark": {
+                  "type": "point",
+                  "shape": "M4.05 5.28a.5.5 0 0 0 .055.527l3.5 4.5a.5.5 0 0 0 .79 0l3.5-4.5A.5.5 0 0 0 11.5 5h-7a.5.5 0 0 0-.45.28",
+                  "size": 4,
+                  "filled": true,
+                  "opacity": 1,
+                  "strokeWidth": 0,
+                  "color": {
+                    "expr": "datum['deltaColor']"
+                  }
+                },
+                "encoding": {
+                  "x": {
+                    "value": {
+                      "expr": "datum.__ix"
+                    }
+                  },
+                  "y": {
+                    "value": {
+                      "expr": "(height + 28) / 2 - 20 + 54 - 8"
+                    }
+                  }
+                }
+              },
+              {
+                "transform": [
+                  {
+                    "window": [
+                      {
+                        "op": "row_number",
+                        "as": "__row"
+                      }
+                    ]
+                  },
+                  {
+                    "filter": "datum.__row == 1"
+                  },
+                  {
+                    "calculate": "datum['deltaDirection'] == '' ? 0 : 16",
+                    "as": "__iw"
+                  },
+                  {
+                    "calculate": "scorecardTextWidth(datum['deltaText'], '600 12px Inter, Roboto, \\'Helvetica Neue\\', Arial, sans-serif')",
+                    "as": "__dw"
+                  },
+                  {
+                    "calculate": "0",
+                    "as": "__cw"
+                  },
+                  {
+                    "calculate": "max(4, width / 2 - (datum.__iw + datum.__dw + (datum.__cw > 0 ? 6 + datum.__cw : 0)) / 2)",
+                    "as": "__ix"
+                  },
+                  {
+                    "calculate": "datum.__ix + datum.__iw",
+                    "as": "__dx"
+                  }
+                ],
+                "mark": {
+                  "type": "text",
+                  "align": "left",
+                  "baseline": "middle",
+                  "fontWeight": 600,
+                  "fontSize": 12,
+                  "color": {
+                    "expr": "datum['deltaColor']"
+                  },
+                  "limit": {
+                    "expr": "max(0, width - 4 - datum.__dx)"
+                  },
+                  "dx": {
+                    "expr": "datum.__dx"
+                  }
+                },
+                "encoding": {
+                  "x": {
+                    "value": 0
+                  },
+                  "y": {
+                    "value": {
+                      "expr": "(height + 28) / 2 - 20 + 54"
+                    }
+                  },
+                  "text": {
+                    "field": "deltaText"
+                  }
+                }
+              },
+              {
+                "transform": [
+                  {
+                    "window": [
+                      {
+                        "op": "row_number",
+                        "as": "__row"
+                      }
+                    ]
+                  },
+                  {
+                    "filter": "datum.__row == 1"
+                  }
+                ],
+                "mark": {
+                  "type": "text",
+                  "align": "center",
+                  "baseline": "middle",
+                  "fontSize": 12,
+                  "color": "#5d6a85",
+                  "limit": {
+                    "expr": "width - 24"
+                  }
+                },
+                "encoding": {
+                  "x": {
+                    "value": {
+                      "expr": "width / 2"
+                    }
+                  },
+                  "y": {
+                    "value": {
+                      "expr": "(height + 28) / 2 - 20 + 34"
+                    }
+                  },
+                  "text": {
+                    "value": "Current YTD Dividends"
+                  }
+                }
+              }
+            ],
+            "config": {
+              "view": {
+                "stroke": null
+              },
+              "mark": {
+                "tooltip": false
+              }
+            },
+            "usermeta": {
+              "snowflake": {
+                "chartConfig": {
+                  "dataLabels": {
+                    "enabled": false
+                  },
+                  "format": {
+                    "abbreviateNumbers": true
+                  }
+                },
+                "chartType": "scorecard",
+                "scorecardConfig": {
+                  "currentColumn": "SUM(RECEIPT_GBP)",
+                  "labelField": "",
+                  "format": "currency",
+                  "deltaColorMode": "increasesBetter",
+                  "comparisonMode": "manual",
+                  "prevColumn": "SUM(RECEIPT_GBP)",
+                  "seriesField": "",
+                  "seriesBucketField": "",
+                  "seriesValueField": "",
+                  "decimals": 2,
+                  "prefix": "£",
+                  "suffix": "",
+                  "comparisonEnabled": true,
+                  "changeType": "relative",
+                  "displayFormat": "change_and_absolute",
+                  "labelEnabled": true,
+                  "labelText": "Current YTD Dividends",
+                  "thresholdDirection": "lower-is-better"
+                }
+              }
+            },
+            "title": ""
+          },
+          "datasources": [
+            "ds-chart-81628d7a9d91"
+          ]
+        }
+      ]
+    }
+  ],
+  "variables": {},
+  "layout": {
+    "tab-0": {
+      "meta": {
+        "default": true
+      },
+      "positions": {
+        "chart-2e77d1d7bb1d": {
+          "x": 0,
+          "y": 2,
+          "w": 3,
+          "h": 3
+        },
+        "chart-81628d7a9d91": {
+          "x": 0,
+          "y": 0,
+          "w": 2,
+          "h": 2
+        }
+      }
+    }
+  },
+  "datasources": {
+    "ds-chart-2e77d1d7bb1d": {
+      "type": "sql",
+      "columns": [
+        {
+          "name": "STOCK_NAME",
+          "type": "VARCHAR"
+        }
+      ],
+      "sql": " SELECT distinct\n        STOCK_NAME\n   FROM DIVIDENDS_dev.Silver.DIVIDENDS",
+      "filter_bindings": []
+    },
+    "ds-chart-81628d7a9d91": {
+      "type": "sql",
+      "columns": [
+        {
+          "name": "YEAR(RECORD_DATE)",
+          "type": "NUMBER"
+        },
+        {
+          "name": "SUM(RECEIPT_GBP)",
+          "type": "NUMBER"
+        }
+      ],
+      "sql": " SELECT \n      --  STOCK_NAME,\n       yEAR(RECORD_DATE) ,\n        sum(RECEIPT_GBP)  \n   FROM DIVIDENDS_DEV.SILVER.DIVIDENDS\n   where  yEAR(RECORD_DATE) = 2026\n   GROUP BY 1--,2",
+      "filter_bindings": []
+    }
+  }
+}
