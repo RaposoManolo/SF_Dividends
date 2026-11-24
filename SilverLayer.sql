@@ -1,33 +1,44 @@
-Use DIVIDENDS_DEV;
-CREATE OR REPLACE TABLE SILVER.DIVIDENDS 
-AS
-Select 
-    TRY_CAST(SPLIT_PART(DIVIDEND_REFERENCE, '/', 1) AS INT) AS Payment_ID,
-    RECORD_DATE,
-    TRY_CAST(SPLIT_PART(DESCRIPTION, ' ', 2) AS Int)  AS NUMBER_OF_STOCKS,
-    -- Field 2: Clean Stock Name
-    TRIM(
-        REGEXP_SUBSTR(
-            DESCRIPTION, 
-            'DIVIDEND\\s+[0-9]+\\s+(.*?)\\s+(COM|SBI|ORD|PREF|CLASS)', 
-            1, 1, 'ie', 1
-        )
-    ) AS STOCK_NAME,
-   RECEIPT_GBP  
-   From Bronze.DIVIDENDS
+USE DATABASE DIVIDENDS_DEV;
 
-   SELECT 
+CREATE OR REPLACE TABLE SILVER.DIVIDENDS AS
+WITH parsed AS (
+    SELECT 
+        TRY_CAST(SPLIT_PART(DIVIDEND_REFERENCE, '/', 1) AS INT) AS PAYMENT_ID,
+        RECORD_DATE AS Payment_Date,
+        TRY_CAST(SPLIT_PART(DESCRIPTION, ' ', 2) AS INT)        AS NUMBER_OF_STOCKS,
+        UPPER(TRIM(
+            REGEXP_SUBSTR(
+                DESCRIPTION, 
+                'DIVIDEND\\s+[0-9]+\\s+(.*?)\\s+(COM|SBI|ORD|PREF|CLASS)', 
+                1, 1, 'ie', 1
+            )
+        ))                                                      AS STOCK_NAME,
+        RECEIPT_GBP  
+    FROM BRONZE.DIVIDENDS
+)
+SELECT 
+    p.PAYMENT_ID,
+    p.Payment_Date,
+    p.NUMBER_OF_STOCKS,
+    p.STOCK_NAME,
+    m.TICKER,
+    p.RECEIPT_GBP
+FROM parsed p
+LEFT JOIN SILVER.STOCK_TICKER_MAP m
+    ON p.STOCK_NAME = UPPER(TRIM(m.STOCK_NAME));
+
+   SELECT *
       --  STOCK_NAME,
-       yEAR(RECORD_DATE) ,
-        sum(RECEIPT_GBP)  
+     --  yEAR(RECORD_DATE) ,
+       -- sum(RECEIPT_GBP)  
    FROM SILVER.DIVIDENDS
-   GROUP BY 1
+  -- GROUP BY 1
 
 
 CREATE OR REPLACE TABLE .DIVIDEND
 
 SELECT RECEIPT_GBP AS Amount, * from DiVIDENDS_dev.SILVER.DIVIDENDS
-where Stock_Name = 'REALTY INCOME CORP'
+--where Stock_Name = 'REALTY INCOME CORP'
 order by payment_ID
 
  FROM 
@@ -37,7 +48,5 @@ order by payment_ID
 
 USE DATABASE DIVIDENDS_DEV;
 CREATE SCHEMA IF NOT EXISTS SILVER;
-
-
 
 CREATE SCHEMA IF NOT EXISTS BRONZE;
